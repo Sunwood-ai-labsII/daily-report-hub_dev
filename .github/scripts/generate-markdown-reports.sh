@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Markdownレポートを生成するスクリプト
+# Markdownレポートを生成するスクリプト（修正版）
 
 set -e
 
@@ -18,6 +18,12 @@ get_status_icon() {
     R*) echo "- 🔄 **Renamed:** \`$2\`" ;;
     *) echo "- 📝 **$1:** \`$2\`" ;;
   esac
+}
+
+# コードブロック内容をサニタイズする関数
+sanitize_code_block() {
+  # バッククォート3つをエスケープ
+  sed 's/```/`\`\`/g' "$1"
 }
 
 # コミット詳細をMarkdown形式で作成（差分付き）
@@ -45,10 +51,10 @@ get_status_icon() {
       echo "\`\`\`"
       echo ""
       
-      # 各コミットのコード差分を表示（最初の100行まで）
+      # 各コミットのコード差分を表示（最初の100行まで、サニタイズ済み）
       echo "### 💻 Code Changes"
       echo "\`\`\`diff"
-      git show $hash --pretty=format:"" 2>/dev/null | head -100 || echo "No code changes available"
+      git show $hash --pretty=format:"" 2>/dev/null | head -100 | sed 's/```/`\`\`/g' || echo "No code changes available"
       echo "\`\`\`"
       echo ""
       echo "---"
@@ -81,18 +87,20 @@ get_status_icon() {
   echo "# 📈 Daily Statistics"
   echo ""
   echo "\`\`\`diff"
-  cat daily_diff_stats_raw.txt
+  # バッククォートをエスケープして出力
+  cat daily_diff_stats_raw.txt | sed 's/```/`\`\`/g'
   echo "\`\`\`"
 } > daily_diff_stats.md
 
-# コード差分をMarkdown形式で作成
+# コード差分をMarkdown形式で作成（サニタイズ済み）
 {
   echo "# 💻 Daily Code Changes"
   echo ""
   echo "## Full Diff"
   echo ""
   echo "\`\`\`diff"
-  cat daily_code_diff_raw.txt
+  # バッククォートをエスケープして出力
+  cat daily_code_diff_raw.txt | sed 's/```/`\`\`/g'
   echo "\`\`\`"
 } > daily_code_diff.md
 
@@ -113,12 +121,13 @@ get_status_icon() {
   fi
 } > latest_diff.md
 
-# 最新コード差分をMarkdown形式で作成
+# 最新コード差分をMarkdown形式で作成（修正版）
 {
   echo "# 🔄 Latest Code Changes"
   echo ""
   echo "\`\`\`diff"
-  cat latest_code_diff_raw.txt
+  # バッククォートをエスケープして出力
+  cat latest_code_diff_raw.txt | sed 's/```/`\`\`/g'
   echo "\`\`\`"
 } > latest_code_diff.md
 
@@ -162,7 +171,8 @@ fi
     echo "## 📈 File Changes Statistics"
     echo ""
     echo "\`\`\`diff"
-    cat daily_diff_stats_raw.txt
+    # バッククォートをエスケープして出力
+    cat daily_diff_stats_raw.txt | sed 's/```/`\`\`/g'
     echo "\`\`\`"
     echo ""
     
