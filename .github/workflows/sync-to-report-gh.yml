@@ -1,4 +1,4 @@
-name: 📊 デイリーレポートハブ同期 v2.3 (YUKIHIKO PR版)
+name: 📊 デイリーレポートハブ同期 v2.4 (YUKIHIKO PR版)
 on:
   push:
     branches: [main, master]
